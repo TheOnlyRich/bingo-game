@@ -87,6 +87,131 @@ class Board {
     }
   }
 
+  aiChoose() {
+    //count 12 lines split to every non-chosen score(every lines includes 5 points)
+    //choose highest cell score
+
+    var cell_score = [];
+
+    for (let i = 0; i < 25; i++) {
+      cell_score.push(0);
+    }
+
+    //===============================================hor 5
+    print("hor 5");
+    for (let i = 0; i < 25; i = i + 5) {
+      let assign_score = 5;
+      let count = 0;
+      for (let p = 0; p < 5; p++) {
+        let pos = i + p;
+
+        if (this.mask[pos] == true) {
+          count = count + 1;
+        }
+      }
+
+      assign_score = assign_score / count;
+
+      for (let p = 0; p < 5; p++) {
+        let pos = i + p;
+
+        if (this.mask[pos] == true) {
+          cell_score[pos] = cell_score[pos] + assign_score;
+        }
+      }
+    }
+    //==============================================ver 5
+    print("ver 5");
+    for (let i = 0; i < 5; i = ++i) {
+      let assign_score = 5;
+      let count = 0;
+      for (let p = 0; p < 25; p = p + 5) {
+        let pos = i + p;
+
+        if (this.mask[pos] == true) {
+          count = count + 1;
+        }
+      }
+
+      assign_score = assign_score / count;
+
+      for (let p = 0; p < 25; p = p + 5) {
+        let pos = i + p;
+
+        if (this.mask[pos] == true) {
+          cell_score[pos] = cell_score[pos] + assign_score;
+        }
+      }
+    }
+
+    //==============================================================cross 2
+
+    //================================================ right to left
+    print("r l");
+    let assign_score = 5;
+    let count = 0;
+    for (let p = 4; p <= 20; p = p + 4) {
+      let pos = p;
+
+      if (this.mask[pos] == true) {
+        count = count + 1;
+      }
+    }
+
+    assign_score = assign_score / count;
+
+    for (let p = 4; p < 20; p = p + 4) {
+      let pos = p;
+
+      if (this.mask[pos] == true) {
+        cell_score[pos] = cell_score[pos] + assign_score;
+      }
+    }
+
+    //========================================================left to right
+    print("l r");
+    assign_score = 5;
+    count = 0;
+    for (let p = 0; p <= 24; p = p + 6) {
+      let pos = p;
+
+      if (this.mask[pos] == true) {
+        count = count + 1;
+      }
+    }
+
+    assign_score = assign_score / count;
+
+    for (let p = 0; p <= 24; p = p + 6) {
+      let pos = p;
+
+      if (this.mask[pos] == true) {
+        cell_score[pos] = cell_score[pos] + assign_score;
+      }
+    }
+
+    //=============================================find higest score
+
+    let max_score = 0;
+    let max_pos = -1;
+    let max_score_value = 0;
+
+    for (let p = 0; p < 25; p = p + 1) {
+      let pos = p;
+      if (this.mask[pos] == true) {
+        if (cell_score[pos] > max_score) {
+          max_score = cell_score[pos];
+          max_score_value = this.numbers[pos];
+          max_pos = pos;
+        }
+      }
+    }
+
+    this.mask[max_pos] = false;
+
+    return max_score_value;
+  }
+
   drawLines() {
     let line_count = 0;
 
@@ -154,7 +279,7 @@ class Board {
 
     pop();
 
-    if (menu.status=='hide'&&line_count >= 5) {
+    if (menu.status == "hide" && line_count >= 5) {
       if (this.is_player) {
         menu.game_over("Player");
       } else {
@@ -252,9 +377,6 @@ class Menu {
   }
 
   start_menu() {
-    
-    
-    
     push();
     fill(0, 0, 10, 199);
     rect(150, 200, 300, 400);
@@ -302,7 +424,7 @@ class Menu {
     fill(0, 0, 10, 99);
     rect(150, 200, 300, 400);
     //winner
-    
+
     // textSize(20);
     // fill(255);
     // text("WINNER: ", 40, 100);
@@ -310,19 +432,12 @@ class Menu {
     // textSize(30 + ((frameCount / 3.3456543) % 30));
     // text(this.winner, 40, 180);
 
-    
-    if(this.winner=='Computer'){
-      
-      image(winner,board.pos_x+170,board.pos_y);
-    }else{
-      
-      image(winner,board.pos_x+170,board.pos_y+180);
-      
+    if (this.winner == "Computer") {
+      image(winner, board.pos_x + 170, board.pos_y);
+    } else {
+      image(winner, board.pos_x + 170, board.pos_y + 180);
     }
-    
-    
-    
-    
+
     //restart f9uheugefwgewu9gwpgwgiugp
     var restart_line = 380;
     strokeWeight(5);
@@ -331,7 +446,7 @@ class Menu {
     rect(150, restart_line, 350, 40);
     fill(255);
     textSize(20);
-    text("Restart >>>", 190, restart_line+6);
+    text("Restart >>>", 190, restart_line + 6);
 
     fill(0, 0, 180, 200);
     rect(this.restart_block_x, restart_line, 50, 40);
@@ -348,7 +463,6 @@ class Menu {
         game_round = 0;
         game_selected = [];
         computer_time = 0;
-        
       }
     }
 
@@ -382,18 +496,15 @@ var game_selected = [];
 var computer_time = 0;
 var winner;
 var music1;
-var johncena ;
-
-
-
+var johncena;
 
 function preload() {
-  winner = loadImage('https://cdn2.iconfinder.com/data/icons/thesquid-ink-40-free-flat-icon-pack/64/cup-64.png');
- music1 = loadSound('music.mp3');
-  johncena=loadSound('johncenaprankcall_cutted (1).mp3');
+  winner = loadImage(
+    "https://cdn2.iconfinder.com/data/icons/thesquid-ink-40-free-flat-icon-pack/64/cup-64.png"
+  );
+  music1 = loadSound("music.mp3");
+  johncena = loadSound("johncenaprankcall_cutted (1).mp3");
 }
-
-
 
 function setup() {
   rectMode(CENTER);
@@ -402,9 +513,6 @@ function setup() {
   board = new Board(50, 50, false);
   board2 = new Board(50, 220, true);
   menu = new Menu();
-  
-  
-
 }
 
 function draw() {
@@ -414,8 +522,13 @@ function draw() {
 
   //com choose
 
-  if ( menu.status == 'hide' && game_round % 2 == 1 && frameCount - computer_time > random(4, 7) * 5) {
-    var r = board.randomChoose();
+  if (
+    menu.status == "hide" &&
+    game_round % 2 == 1 &&
+    frameCount - computer_time > random(4, 7) * 5
+  ) {
+    // var r = board.randomChoose();
+    var r = board.aiChoose();
     game_selected.push(r);
     game_round++;
 
@@ -430,7 +543,7 @@ function draw() {
 }
 
 function mouseClicked() {
-  if (menu.status == "start" ||   menu.status == 'end'  ) {
+  if (menu.status == "start" || menu.status == "end") {
     return;
   }
 
